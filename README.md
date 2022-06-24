@@ -1,1 +1,1 @@
-# Oasis_Network_whale_detector
+# Oasis Network Whale Detector
