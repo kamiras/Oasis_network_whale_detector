@@ -1,6 +1,6 @@
 # Oasis Network Whale Detector
 
-The reason of this project is to analyze the Oasis Network Blockchain to find the most valuable transactions.
+The reason of this project is to analyze **in live** the Oasis Network Blockchain to find the most valuable transactions and report it instantly. This could help to the community and investors to find the behaviour of the network daily.
 
 This project was made by kamiras. Feel free to use, change and ask everything that you want.
 
