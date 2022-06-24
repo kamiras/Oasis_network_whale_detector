@@ -37,7 +37,7 @@ mydb.commit()
 '''
 
 
-''' Here we can see the first the highest transaction of the database
+''' Here we can see the first highest transaction of the database
 
 mycursor.execute("SELECT * FROM datos ORDER BY amount DESC")
 
