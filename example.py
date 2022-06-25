@@ -1,3 +1,4 @@
+#The reason of this file is to deploy the database correctly step by step
 # You have to remember that every 24 hours the whale.py script deletes all the data from the databe to keep it clean and more efficient
 
 import mysql.connector
