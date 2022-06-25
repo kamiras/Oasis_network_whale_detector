@@ -79,8 +79,6 @@ while True:
 
     try:
 
-        time.sleep(0.5)
-
         rose_api_variable1, rose_api_variable2, rose_api_variable3, rose_api_variable4, rose_api_variable5 = rose_api()
         rose_price_variable1, rose_price_variable2 = rose_price_coinbase_api()
 
@@ -88,26 +86,61 @@ while True:
 
             dolar_cost = float(rose_price_variable1) * float(rose_api_variable1)
 
-            if (datetime.now().strftime("%H:%M") == "22:00"):
+            if (datetime.now().strftime("%H:%M") == "20:00"):
 
                     mycursor.execute("SELECT * FROM datos ORDER BY amount DESC LIMIT 3")
 
                     myresult = mycursor.fetchall()
 
-                    client.create_tweet(text='''
-                    Top 3 Transactions of the day\n
-                    1🏆 {0} ROSE ({1} USD) {2} EU\n
-                    2🥈 {3} ROSE ({4} USD) {5} EU\n
-                    3🥉 {6} ROSE ({7} USD) {8} EU\n
-                    \n$ROSE #OasisNetwork'''
-                    
-                    .format(
+                    if len(myresult) == 3:
 
-                    myresult[0][1], format(float(rose_price_variable1) * int(myresult[0][1]), ".2f"),myresult[0][2],
-                    myresult[1][1], format(float(rose_price_variable1) * int(myresult[1][1]), ".2f"),myresult[1][2],
-                    myresult[2][1], format(float(rose_price_variable1) * int(myresult[2][1]), ".2f"),myresult[2][2])
-                        
-                    )
+                      client.create_tweet(text='''
+                      Top 3 Transactions of the day\n
+                      1🏆 {0} ROSE ({1} USD) {2} EU\n
+                      2🥈 {3} ROSE ({4} USD) {5} EU\n
+                      3🥉 {6} ROSE ({7} USD) {8} EU\n
+                      \n$ROSE #OasisNetwork'''
+                      
+                      .format(
+
+                      myresult[0][1], format(float(rose_price_variable1) * int(myresult[0][1]), ".2f"),myresult[0][2],
+                      myresult[1][1], format(float(rose_price_variable1) * int(myresult[1][1]), ".2f"),myresult[1][2],
+                      myresult[2][1], format(float(rose_price_variable1) * int(myresult[2][1]), ".2f"),myresult[2][2])
+                          
+                      )
+
+                    elif len(myresult) == 2:
+
+                      client.create_tweet(text='''
+                      Top 2 Transactions of the day\n
+                      1🏆 {0} ROSE ({1} USD) {2} EU\n
+                      2🥈 {3} ROSE ({4} USD) {5} EU\n
+                      \n$ROSE #OasisNetwork'''
+                      
+                      .format(
+
+                      myresult[0][1], format(float(rose_price_variable1) * int(myresult[0][1]), ".2f"),myresult[0][2],
+                      myresult[1][1], format(float(rose_price_variable1) * int(myresult[1][1]), ".2f"),myresult[1][2])
+                          
+                      )
+
+                    elif len(myresult) == 1:
+
+                      client.create_tweet(text='''
+                      Top 1 Transactions of the day\n
+                      1🏆 {0} ROSE ({1} USD) {2} EU\n
+                      \n$ROSE #OasisNetwork'''
+                      
+                      .format(
+
+                      myresult[0][1], format(float(rose_price_variable1) * int(myresult[0][1]), ".2f"),myresult[0][2])
+                          
+                      )
+
+                    else:
+
+                        pass
+                      
 
                     sql = "DELETE FROM datos"
 
