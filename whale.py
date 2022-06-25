@@ -88,9 +88,7 @@ while True:
 
             dolar_cost = float(rose_price_variable1) * float(rose_api_variable1)
 
-            if (datetime.now().strftime("%H:%M:%S") == "22:00:00"):
-
-                    time.sleep(1)
+            if (datetime.now().strftime("%H:%M") == "22:00"):
 
                     mycursor.execute("SELECT * FROM datos ORDER BY amount DESC LIMIT 3")
 
