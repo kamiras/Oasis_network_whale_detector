@@ -18,8 +18,8 @@ This project was made by kamiras. Feel free to use, change and ask everything th
 
 **Automated Tweets**
 
-- The bot tweets transactions over 100000 dollars by default.
-- Every 24 Hours the bot tweets a rank of the 3 highest transactions of the Network (22:00 EU).
+- The bot tweets transactions over 25000 dollars by default.
+- Every 24 Hours the bot tweets a rank of the 3 highest transactions of the Network (22:00 EU) - (In process, due to problems with the server memory).
 
 **Database and example.py**
 
