@@ -23,7 +23,7 @@ This project was made by kamiras. Feel free to use, change and ask everything th
 
 **Database and example.py**
 
-- 1 Databse
+- 1 Database
 - 1 Table
 - 3 Columns
 
