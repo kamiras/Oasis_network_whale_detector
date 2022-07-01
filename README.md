@@ -25,7 +25,7 @@ This project was made by kamiras. Feel free to use, change and ask everything th
 
 - 1 Database
 - 1 Table
-- 3 Columns
+- 4 Columns
 
 example.py: As the name says it is an example that you could follow to create the database. Rather than doing an .sql script I chose to do it with python for its simplicity.
 
