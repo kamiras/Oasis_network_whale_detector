@@ -5,6 +5,8 @@ from datetime import datetime
 import tweepy
 import keys
 import mysql.connector
+from kucoin.client import Market
+import gc
 
 mydb = mysql.connector.connect(
   host="", # Insert your host
@@ -21,8 +23,9 @@ client = tweepy.Client(consumer_key=keys.API_KEY,
                         access_token=keys.ACCES_TOKEN,
                         access_token_secret=keys.ACCES_TOKEN_SECRET)
 
-link1='https://api.oasisscan.com/mainnet/chain/transactions?method=staking.Transfer&page=1&runtime=true&size=1'
-link2='https://api.coinbase.com/v2/prices/ROSE-USD/buy'
+link1 ='https://api.oasisscan.com/mainnet/chain/transactions?method=staking.Transfer&page=1&runtime=true&size=1'
+link2 ='https://api.coinbase.com/v2/prices/ROSE-USD/buy'
+link3 = 'https://api.kucoin.com'
 
 def rose_api():
 
@@ -40,7 +43,7 @@ def rose_api():
 
     except:
 
-        print("An error in the Oasis Network API has ocurred at " + str(datetime.now().time()))
+        pass
 
 def rose_price_coinbase_api():
 
@@ -54,7 +57,19 @@ def rose_price_coinbase_api():
 
     except:
 
-        print("An error in the coinbase API has ocurred at " + str(datetime.now().time()))
+        pass
+
+def rose_price_kucoin_api():
+
+    try:
+
+        ticker = requests.get(link3 + '/api/v1/market/orderbook/level1?symbol=ROSE-USDT').json()
+        result = ticker['data']['price']
+        return result, True
+
+    except:
+
+        pass
 
 def comprobaciones(rose_api_variable3, rose_api_variable4):
 
@@ -79,14 +94,16 @@ while True:
 
     try:
 
+        time.sleep(0.5)
+
         rose_api_variable1, rose_api_variable2, rose_api_variable3, rose_api_variable4, rose_api_variable5 = rose_api()
-        rose_price_variable1, rose_price_variable2 = rose_price_coinbase_api()
+        rose_price_variable1, rose_price_variable2 = rose_price_kucoin_api() # The kucoin API is more accurate than the rose_price_coinbase_api() API, but you can change it if you want.
 
         if (rose_api_variable5 == True and rose_price_variable2 == True):
 
             dolar_cost = float(rose_price_variable1) * float(rose_api_variable1)
 
-            if (datetime.now().strftime("%H:%M") == "20:00"):
+            if (datetime.now().strftime("%H:%M") == "22:00"):
 
                     mycursor.execute("SELECT * FROM datos ORDER BY amount DESC LIMIT 3")
 
@@ -149,7 +166,7 @@ while True:
                     mydb.commit()
 
 
-            if (dolar_cost >= 25000): # The transactions that are going to be submited 1:1 USD. In this example only transactions over 25K dollars will be processed
+            if (dolar_cost >= 25000): # The transactions that are going to be submited 1:1 USD. In this example only transactions over 100K dollars will be processed
 
                 if (num == 0):
 
@@ -182,9 +199,10 @@ while True:
                 num += 1
 
             del rose_api_variable1,rose_api_variable2,rose_price_variable1,dolar_cost, rose_api_variable5, rose_price_variable2
+            gc.collect()
 
     except:
 
-        continue
+        pass
 
     
