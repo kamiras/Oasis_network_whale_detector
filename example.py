@@ -1,24 +1,15 @@
+#Creation of the databse via Python
 # You have to remember that every 24 hours the whale.py script deletes all the data from the databe to keep it clean and more efficient
 
 import mysql.connector
-from datetime import datetime
-import tweepy
-import keys
-
-client = tweepy.Client(consumer_key=keys.API_KEY,
-                        consumer_secret=keys.API_SECRET,
-                        access_token=keys.ACCES_TOKEN,
-                        access_token_secret=keys.ACCES_TOKEN_SECRET)
 
 mydb = mysql.connector.connect(
   host="localhost", # Insert your host
   user="root", # Insert your user
-  password="", # Insert your password 
+  password="asir1", # Insert your password 
   database="oasis_database" # Insert your database, if you follow the example bellow the database would be 'oasis_database'
 
 )
-
-print(datetime.now().strftime("%H:%M"))
 
 ''' Creation of the the database, table and columns
 
