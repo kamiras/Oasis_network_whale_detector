@@ -6,7 +6,7 @@ import mysql.connector
 mydb = mysql.connector.connect(
   host="localhost", # Insert your host
   user="root", # Insert your user
-  password="asir1", # Insert your password 
+  password="", # Insert your password 
   database="oasis_database" # Insert your database, if you follow the example bellow the database would be 'oasis_database'
 
 )
