@@ -1,4 +1,4 @@
-#Creation of the databse via Python
+#Creation of the database via Python.
 # You have to remember that every 24 hours the whale.py script deletes all the data from the databe to keep it clean and more efficient
 
 import mysql.connector
