@@ -14,6 +14,7 @@ This project was made by kamiras. Feel free to use, change and ask everything th
 
 - Twitter API
 - Coinbase API
+- Kucoin API
 - oasisscan API
 
 **Automated Tweets**
