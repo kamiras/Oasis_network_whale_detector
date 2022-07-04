@@ -166,7 +166,7 @@ while True:
                     mydb.commit()
 
 
-            if (dolar_cost >= 25000): # The transactions that are going to be submited 1:1 USD. In this example only transactions over 100K dollars will be processed
+            if (dolar_cost >= 25000): # The transactions that are going to be submited 1:1 USD. In this example only transactions over 25K dollars will be processed
 
                 if (num == 0):
 
