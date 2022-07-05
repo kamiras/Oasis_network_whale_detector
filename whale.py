@@ -97,7 +97,14 @@ while True:
         time.sleep(0.5)
 
         rose_api_variable1, rose_api_variable2, rose_api_variable3, rose_api_variable4, rose_api_variable5 = rose_api()
-        rose_price_variable1, rose_price_variable2 = rose_price_kucoin_api() # The kucoin API is more accurate than the rose_price_coinbase_api() API, but you can change it if you want.
+
+        try:
+
+            rose_price_variable1, rose_price_variable2 = rose_price_kucoin_api() # The kucoin API is more accurate than the rose_price_coinbase_api() API, but you can change it if you want.
+
+        except: # If the kucoin API fails use the coinbase API
+
+            rose_price_variable1, rose_price_variable2 = rose_price_coinbase_api()
 
         if (rose_api_variable5 == True and rose_price_variable2 == True):
 
@@ -120,9 +127,9 @@ while True:
                       
                       .format(
 
-                      myresult[0][1], format(float(rose_price_variable1) * int(myresult[0][1]), ".2f"),myresult[0][2],
-                      myresult[1][1], format(float(rose_price_variable1) * int(myresult[1][1]), ".2f"),myresult[1][2],
-                      myresult[2][1], format(float(rose_price_variable1) * int(myresult[2][1]), ".2f"),myresult[2][2])
+                      myresult[0][1], myresult[0][3], myresult[0][2],
+                      myresult[1][1], myresult[1][3], myresult[1][2],
+                      myresult[2][1], myresult[2][3], myresult[2][2])
                           
                       )
 
@@ -136,8 +143,8 @@ while True:
                       
                       .format(
 
-                      myresult[0][1], format(float(rose_price_variable1) * int(myresult[0][1]), ".2f"),myresult[0][2],
-                      myresult[1][1], format(float(rose_price_variable1) * int(myresult[1][1]), ".2f"),myresult[1][2])
+                      myresult[0][1], myresult[0][3], myresult[0][2],
+                      myresult[1][1], myresult[1][3], myresult[1][2])
                           
                       )
 
@@ -150,7 +157,7 @@ while True:
                       
                       .format(
 
-                      myresult[0][1], format(float(rose_price_variable1) * int(myresult[0][1]), ".2f"),myresult[0][2])
+                      myresult[0][1], myresult[0][3], myresult[0][2])
                           
                       )
 
@@ -174,35 +181,36 @@ while True:
 
                         client.create_tweet(text='{0} ROSE ({1} USD) transfered 𝗳𝗿𝗼𝗺 {2} 𝘁𝗼 {3}\n $ROSE #OasisNetwork'.format(rose_api_variable1, format(dolar_cost, ".2f"), rose_api_variable_result3, rose_api_variable_result4))
 
-                        sql = "INSERT INTO datos (oasis_from, amount, time) VALUES (%s, %s, %s)"
-                        val = (rose_api_variable3, rose_api_variable1, datetime.now().strftime("%H:%M:%S"))
-                        mycursor.execute(sql, val)
-
-                        mydb.commit()
-
-                        auxiliar = rose_api_variable2         
-
-                elif(num >= 1 and auxiliar != rose_api_variable2):
-
-                        rose_api_variable_result3, rose_api_variable_result4 = comprobaciones(rose_api_variable3, rose_api_variable4)
-
-                        client.create_tweet(text='{0} ROSE ({1} USD) transfered 𝗳𝗿𝗼𝗺 {2} 𝘁𝗼 {3}\n $ROSE #OasisNetwork'.format(rose_api_variable1, format(dolar_cost, ".2f"), rose_api_variable_result3, rose_api_variable_result4))
-
-                        sql = "INSERT INTO datos (oasis_from, amount, time) VALUES (%s, %s, %s)"
-                        val = (rose_api_variable3, rose_api_variable1, datetime.now().strftime("%H:%M:%S"))
+                        sql = "INSERT INTO datos (oasis_from, amount, time, price) VALUES (%s, %s, %s, %s)"
+                        val = (rose_api_variable3, rose_api_variable1, datetime.now().strftime("%H:%M:%S"), dolar_cost)
                         mycursor.execute(sql, val)
 
                         mydb.commit()
 
                         auxiliar = rose_api_variable2
 
-                num += 1
+                        num += 1         
 
-            del rose_api_variable1,rose_api_variable2,rose_price_variable1,dolar_cost, rose_api_variable5, rose_price_variable2
+                elif(num == 1 and auxiliar != rose_api_variable2):
+
+                        rose_api_variable_result3, rose_api_variable_result4 = comprobaciones(rose_api_variable3, rose_api_variable4)
+
+                        client.create_tweet(text='{0} ROSE ({1} USD) transfered 𝗳𝗿𝗼𝗺 {2} 𝘁𝗼 {3}\n $ROSE #OasisNetwork'.format(rose_api_variable1, format(dolar_cost, ".2f"), rose_api_variable_result3, rose_api_variable_result4))
+
+                        sql = "INSERT INTO datos (oasis_from, amount, time, price) VALUES (%s, %s, %s, %s)"
+                        val = (rose_api_variable3, rose_api_variable1, datetime.now().strftime("%H:%M:%S"), dolar_cost)
+                        mycursor.execute(sql, val)
+
+                        mydb.commit()
+
+                        auxiliar = rose_api_variable2
+
+            del rose_api_variable1,rose_api_variable2,rose_api_variable3,rose_api_variable4,rose_price_variable1,dolar_cost, rose_api_variable5, rose_price_variable2
             gc.collect()
 
     except:
 
-        pass
+        del rose_api_variable1,rose_api_variable2,rose_api_variable3,rose_api_variable4,rose_price_variable1,dolar_cost, rose_api_variable5, rose_price_variable2
+        gc.collect()
 
     
