@@ -20,7 +20,7 @@ This project was made by kamiras. Feel free to use, change and ask everything th
 **Automated Tweets**
 
 - The bot tweets transactions over 25000 dollars by default.
-- Every 24 Hours the bot tweets a rank of the 3 highest transactions of the Network (22:00 EU) - (In process, due to problems with the server memory).
+- Every 24 Hours the bot tweets a rank of the 3 highest transactions of the Network (22:00 EU).
 
 **Database and example.py**
 
@@ -32,7 +32,7 @@ example.py: As the name says it is an example that you could follow to create th
 
 ## What do you consider a whale?
 
-I decided to do a BTC/ROSE comparison to find out the amount of ROSE's equivalent to the BTC network.
+In our opinion we decided to do a BTC/ROSE comparison to find out the amount of ROSE equivalent to the BTC network.
 
 If we look at the next picture we can see the Bitcoin column with the supply, amount of bitcoins to become a whale and the percentage of 1000 Bitcoins compared to the supply. If we do the simple math we will find out that the amount of ROSE to become a whale is 470.000 ROSE's, which is 25.380 USD ~ (26/06/2022).
 
