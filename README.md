@@ -22,6 +22,10 @@ This project was made by kamiras. Feel free to use, change and ask everything th
 - The bot tweets transactions over 25000 dollars by default.
 - Every 24 Hours the bot tweets a rank of the 3 highest transactions of the Network (22:00 EU).
 
+**Weekly Chart**
+
+- Each Saturday at 20:00 pm the bot posts a tweet with the Top 10 Validators of the Network.
+
 **Database and example.py**
 
 - 1 Database
