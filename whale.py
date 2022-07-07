@@ -1,18 +1,21 @@
 import requests
 import json
 import time
-from datetime import datetime
+from datetime import datetime, date
 import tweepy
 import keys
 import mysql.connector
 from kucoin.client import Market
 import gc
+import matplotlib.pyplot as plt
+import numpy as np
+import os
 
 mydb = mysql.connector.connect(
-  host="", # Insert your host
-  user="", # Insert your user
+  host="localhost", # Insert your host
+  user="root", # Insert your user
   password="", # Insert your password 
-  database="" # Insert your database, if you follow the example bellow the database would be 'oasis_database'
+  database="oasis_database" # Insert your database, if you follow the example bellow the database would be 'oasis_database'
 
 )
 
@@ -23,9 +26,22 @@ client = tweepy.Client(consumer_key=keys.API_KEY,
                         access_token=keys.ACCES_TOKEN,
                         access_token_secret=keys.ACCES_TOKEN_SECRET)
 
-link1 ='https://api.oasisscan.com/mainnet/chain/transactions?method=staking.Transfer&page=1&runtime=true&size=1'
-link2 ='https://api.coinbase.com/v2/prices/ROSE-USD/buy'
+auth = tweepy.OAuthHandler(
+            keys.API_KEY,
+            keys.API_SECRET
+            )
+
+auth.set_access_token(
+            keys.ACCES_TOKEN,
+            keys.ACCES_TOKEN_SECRET
+            )
+
+api = tweepy.API(auth)
+
+link1 = 'https://api.oasisscan.com/mainnet/chain/transactions?method=staking.Transfer&page=1&runtime=true&size=1'
+link2 = 'https://api.coinbase.com/v2/prices/ROSE-USD/buy'
 link3 = 'https://api.kucoin.com'
+link4 = 'https://api.oasisscan.com/mainnet/validator/list?orderBy=escrow&page=1&pageSize=10&sort=desc'
 
 def rose_api():
 
@@ -86,6 +102,47 @@ def comprobaciones(rose_api_variable3, rose_api_variable4):
                 rose_api_variable4 = line.split(":")[0]
 
     return rose_api_variable3, rose_api_variable4
+
+def rose_api_staking():
+
+    try:
+
+        response_API = requests.get(link4)
+        data = response_API.text
+        parse_json = json.loads(data)
+
+        names = []
+        escrow = []
+        graphic_colors = ["#EAECEE", "#D5D8DC", "#D5D8DC", "#ABB2B9" ,"#808B96" ,"#566573", "#2C3E50", "#273746", "#212F3D", "#1C2833"]
+
+        for i in range(0, 10):
+
+            if (parse_json['data']['list'][i]['name'] == None):
+
+                names.append('NoName')
+
+            else:
+
+                names.append(parse_json['data']['list'][i]['name'])
+
+            escrow.append(int(float(parse_json['data']['list'][i]['escrow'])))
+        
+        plt.rcParams["figure.figsize"] = (8, 4.7)
+        figure=plt.figure()
+        axes = figure.add_subplot()
+        axes.set_title("Top 10 Validators of Oasis Network", fontsize=20,pad=10,color="#011119", fontweight ="bold")
+        plt.pie(escrow, labels=names, autopct='%0.f%%', shadow=True, startangle=90, colors = graphic_colors)
+        axes.legend(escrow, loc='center', bbox_to_anchor=(-0.395, 0.52))
+        plt.text(-2.225, 0.85, "Amount of ROSE", horizontalalignment='center')
+        plt.text(2.3, -1.5, datetime.date(datetime.now()), horizontalalignment='center')
+        #plt.show()
+        plt.savefig('./images/{}.png'.format(datetime.date(datetime.now())))
+
+        return './images/{}.png'.format(datetime.date(datetime.now()))
+
+    except:
+
+        pass
 
 num = 0
 auxiliar = ""
@@ -151,7 +208,7 @@ while True:
                     elif len(myresult) == 1:
 
                       client.create_tweet(text='''
-                      Top 1 Transactions of the day\n
+                      Top 1 Transaction of the day\n
                       1🏆 {0} ROSE ({1} USD) {2} EU\n
                       \n$ROSE #OasisNetwork'''
                       
@@ -164,13 +221,20 @@ while True:
                     else:
 
                         pass
-                      
 
                     sql = "DELETE FROM datos"
-
                     mycursor.execute(sql)
-
                     mydb.commit()
+                    time.sleep(60)
+
+            if (date.today().weekday() == 5 and datetime.now().strftime("%H:%M") == "20:00"):
+        
+                path = rose_api_staking()
+                media = api.media_upload(path)
+                tweet = "Weekly Validator Top $ROSE #OasisNetwork"
+                post_result = api.update_status(status=tweet, media_ids=[media.media_id])
+                os.remove('./images/{}.png'.format(datetime.date(datetime.now())))
+                time.sleep(60)
 
 
             if (dolar_cost >= 25000): # The transactions that are going to be submited 1:1 USD. In this example only transactions over 25K dollars will be processed
@@ -191,7 +255,7 @@ while True:
 
                         num += 1         
 
-                elif(num == 1 and auxiliar != rose_api_variable2):
+                elif(num == 1 and auxiliar != rose_api_variable2 and auxiliar != "" and rose_api_variable2 != ""):
 
                         rose_api_variable_result3, rose_api_variable_result4 = comprobaciones(rose_api_variable3, rose_api_variable4)
 
