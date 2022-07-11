@@ -10,16 +10,7 @@ import gc
 import matplotlib.pyplot as plt
 import numpy as np
 import os
-
-mydb = mysql.connector.connect(
-  host="localhost", # Insert your host
-  user="root", # Insert your user
-  password="", # Insert your password 
-  database="oasis_database" # Insert your database, if you follow the example bellow the database would be 'oasis_database'
-
-)
-
-mycursor = mydb.cursor()
+import traceback
 
 client = tweepy.Client(consumer_key=keys.API_KEY,
                         consumer_secret=keys.API_SECRET,
@@ -38,10 +29,98 @@ auth.set_access_token(
 
 api = tweepy.API(auth)
 
+def mysql_database_insert(data1, data2, data3, data4):
+
+    mydb = mysql.connector.connect(
+    host="localhost", # Insert your host
+    user="root", # Insert your user
+    password="", # Insert your password
+    database="oasis_database" # Insert your database, if you follow the example bellow the database would be 'oasis_database'
+
+                )
+
+    mycursor = mydb.cursor()
+    sql = "INSERT INTO datos (oasis_from, amount, time, price) VALUES (%s, %s, %s, %s)"
+    val = (data1, data2, data3, data4)
+    mycursor.execute(sql, val)
+
+    mydb.commit()
+
+def mysql_database_top():
+
+    mydb = mysql.connector.connect(
+    host="localhost", # Insert your host
+    user="root", # Insert your user
+    password="", # Insert your password
+    database="oasis_database" # Insert your database, if you follow the example bellow the database would be 'oasis_database'
+
+                )
+
+    mycursor = mydb.cursor()
+
+    mycursor.execute("SELECT * FROM datos ORDER BY amount DESC LIMIT 3")
+
+    myresult = mycursor.fetchall()
+
+    if len(myresult) == 3:
+
+        client.create_tweet(text='''
+        Top 3 Transactions of the day\n
+        1🏆 {0} ROSE ({1} USD) {2} EU\n
+        2🥈 {3} ROSE ({4} USD) {5} EU\n
+        3🥉 {6} ROSE ({7} USD) {8} EU\n
+        \n$ROSE #OasisNetwork'''
+                      
+        .format(
+
+        myresult[0][1], myresult[0][3], myresult[0][2],
+        myresult[1][1], myresult[1][3], myresult[1][2],
+        myresult[2][1], myresult[2][3], myresult[2][2])
+                          
+        )
+
+    elif len(myresult) == 2:
+
+            client.create_tweet(text='''
+            Top 2 Transactions of the day\n
+            1🏆 {0} ROSE ({1} USD) {2} EU\n
+            2🥈 {3} ROSE ({4} USD) {5} EU\n
+            \n$ROSE #OasisNetwork'''
+                      
+            .format(
+
+            myresult[0][1], myresult[0][3], myresult[0][2],
+            myresult[1][1], myresult[1][3], myresult[1][2])
+                          
+            )
+
+    elif len(myresult) == 1:
+
+            client.create_tweet(text='''
+            Top 1 Transaction of the day\n
+            1🏆 {0} ROSE ({1} USD) {2} EU\n
+            \n$ROSE #OasisNetwork'''
+                      
+            .format(
+
+            myresult[0][1], myresult[0][3], myresult[0][2])
+                          
+                      )
+
+    else:
+
+            pass
+
+    sql = "DELETE FROM datos"
+    mycursor.execute(sql)
+    mydb.commit()
+    time.sleep(60)
+
 link1 = 'https://api.oasisscan.com/mainnet/chain/transactions?method=staking.Transfer&page=1&runtime=true&size=1'
 link2 = 'https://api.coinbase.com/v2/prices/ROSE-USD/buy'
 link3 = 'https://api.kucoin.com'
 link4 = 'https://api.oasisscan.com/mainnet/validator/list?orderBy=escrow&page=1&pageSize=10&sort=desc'
+link5 = "https://api.twitter.com/2/tweets/search/recent?query=from%3Aoasis_whale"
 
 def rose_api():
 
@@ -89,19 +168,25 @@ def rose_price_kucoin_api():
 
 def comprobaciones(rose_api_variable3, rose_api_variable4):
 
-    with open("pub_keys.txt","r") as e:
+    try:
 
-        for line in e:
+        with open("pub_keys.txt","r") as e:
 
-            if (line.strip("\n").split(":")[1] == rose_api_variable3):
+            for line in e:
 
-                rose_api_variable3 = line.split(":")[0]
+                if (line.strip("\n").split(":")[1] == rose_api_variable3):
 
-            elif(line.strip("\n").split(":")[1] == rose_api_variable4):
+                    rose_api_variable3 = line.split(":")[0]
 
-                rose_api_variable4 = line.split(":")[0]
+                elif(line.strip("\n").split(":")[1] == rose_api_variable4):
 
-    return rose_api_variable3, rose_api_variable4
+                    rose_api_variable4 = line.split(":")[0]
+
+        return rose_api_variable3, rose_api_variable4
+
+    except:
+
+        pass
 
 def rose_api_staking():
 
@@ -144,24 +229,50 @@ def rose_api_staking():
 
         pass
 
-num = 0
+def twitter_account():
+
+    try:
+
+        headers={'Authorization':'Bearer ' + keys.EXTRA_BEARER_CODE}
+
+        response_API = requests.get(link5, headers=headers)
+        data = response_API.text
+        parse_json = json.loads(data)
+        result1 = parse_json['data'][0]['text']
+
+        return result1
+
+    except:
+
+        pass
+
+def errors():
+
+    try:
+
+        with open("exceptions.log", "a") as logfile:
+                    traceback.print_exc(file=logfile)
+                    logfile.write(str(datetime.now()) + "\n\n")
+
+    except:
+
+        pass
+    
 auxiliar = ""
 
 while True:
 
     try:
 
-        time.sleep(0.5)
-
         rose_api_variable1, rose_api_variable2, rose_api_variable3, rose_api_variable4, rose_api_variable5 = rose_api()
 
         try:
 
-            rose_price_variable1, rose_price_variable2 = rose_price_kucoin_api() # The kucoin API is more accurate than the rose_price_coinbase_api() API, but you can change it if you want.
+            rose_price_variable1, rose_price_variable2 = rose_price_coinbase_api() # The kucoin API is more accurate than the rose_price_coinbase_api() API, but you can change it if you want.
 
         except: # If the kucoin API fails use the coinbase API
 
-            rose_price_variable1, rose_price_variable2 = rose_price_coinbase_api()
+            rose_price_variable1, rose_price_variable2 = rose_price_kucoin_api()
 
         if (rose_api_variable5 == True and rose_price_variable2 == True):
 
@@ -169,63 +280,7 @@ while True:
 
             if (datetime.now().strftime("%H:%M") == "22:00"):
 
-                    mycursor.execute("SELECT * FROM datos ORDER BY amount DESC LIMIT 3")
-
-                    myresult = mycursor.fetchall()
-
-                    if len(myresult) == 3:
-
-                      client.create_tweet(text='''
-                      Top 3 Transactions of the day\n
-                      1🏆 {0} ROSE ({1} USD) {2} EU\n
-                      2🥈 {3} ROSE ({4} USD) {5} EU\n
-                      3🥉 {6} ROSE ({7} USD) {8} EU\n
-                      \n$ROSE #OasisNetwork'''
-                      
-                      .format(
-
-                      myresult[0][1], myresult[0][3], myresult[0][2],
-                      myresult[1][1], myresult[1][3], myresult[1][2],
-                      myresult[2][1], myresult[2][3], myresult[2][2])
-                          
-                      )
-
-                    elif len(myresult) == 2:
-
-                      client.create_tweet(text='''
-                      Top 2 Transactions of the day\n
-                      1🏆 {0} ROSE ({1} USD) {2} EU\n
-                      2🥈 {3} ROSE ({4} USD) {5} EU\n
-                      \n$ROSE #OasisNetwork'''
-                      
-                      .format(
-
-                      myresult[0][1], myresult[0][3], myresult[0][2],
-                      myresult[1][1], myresult[1][3], myresult[1][2])
-                          
-                      )
-
-                    elif len(myresult) == 1:
-
-                      client.create_tweet(text='''
-                      Top 1 Transaction of the day\n
-                      1🏆 {0} ROSE ({1} USD) {2} EU\n
-                      \n$ROSE #OasisNetwork'''
-                      
-                      .format(
-
-                      myresult[0][1], myresult[0][3], myresult[0][2])
-                          
-                      )
-
-                    else:
-
-                        pass
-
-                    sql = "DELETE FROM datos"
-                    mycursor.execute(sql)
-                    mydb.commit()
-                    time.sleep(60)
+                    mysql_database_top()
 
             if (date.today().weekday() == 5 and datetime.now().strftime("%H:%M") == "20:00"):
         
@@ -239,42 +294,74 @@ while True:
 
             if (dolar_cost >= 25000): # The transactions that are going to be submited 1:1 USD. In this example only transactions over 25K dollars will be processed
 
-                if (num == 0):
+                if auxiliar != rose_api_variable2:
 
-                        rose_api_variable_result3, rose_api_variable_result4 = comprobaciones(rose_api_variable3, rose_api_variable4)
+                    rose_api_variable_result3, rose_api_variable_result4 = comprobaciones(rose_api_variable3, rose_api_variable4)
 
-                        client.create_tweet(text='{0} ROSE ({1} USD) transfered 𝗳𝗿𝗼𝗺 {2} 𝘁𝗼 {3}\n $ROSE #OasisNetwork'.format(rose_api_variable1, format(dolar_cost, ".2f"), rose_api_variable_result3, rose_api_variable_result4))
+                    last_tweet = twitter_account()
 
-                        sql = "INSERT INTO datos (oasis_from, amount, time, price) VALUES (%s, %s, %s, %s)"
-                        val = (rose_api_variable3, rose_api_variable1, datetime.now().strftime("%H:%M:%S"), dolar_cost)
-                        mycursor.execute(sql, val)
+                    client_text = '{0} ROSE ({1} USD) transfered 𝗳𝗿𝗼𝗺 {2} 𝘁𝗼 {3}\n $ROSE #OasisNetwork'.format(rose_api_variable1, format(dolar_cost, ".2f"), rose_api_variable_result3, rose_api_variable_result4)
 
-                        mydb.commit()
+                    if (rose_api_variable_result3[0] == "#" and rose_api_variable_result4[0] == "#"):
 
-                        auxiliar = rose_api_variable2
+                        final_tweet = "🏦 " + client_text
 
-                        num += 1         
+                        if (final_tweet != last_tweet):
 
-                elif(num == 1 and auxiliar != rose_api_variable2 and auxiliar != "" and rose_api_variable2 != ""):
+                            client.create_tweet(text=final_tweet)
 
-                        rose_api_variable_result3, rose_api_variable_result4 = comprobaciones(rose_api_variable3, rose_api_variable4)
+                            mysql_database_insert(rose_api_variable3, rose_api_variable1, datetime.now().strftime("%H:%M:%S"), dolar_cost)
 
-                        client.create_tweet(text='{0} ROSE ({1} USD) transfered 𝗳𝗿𝗼𝗺 {2} 𝘁𝗼 {3}\n $ROSE #OasisNetwork'.format(rose_api_variable1, format(dolar_cost, ".2f"), rose_api_variable_result3, rose_api_variable_result4))
+                            auxiliar = rose_api_variable2
 
-                        sql = "INSERT INTO datos (oasis_from, amount, time, price) VALUES (%s, %s, %s, %s)"
-                        val = (rose_api_variable3, rose_api_variable1, datetime.now().strftime("%H:%M:%S"), dolar_cost)
-                        mycursor.execute(sql, val)
+                    elif (rose_api_variable_result3[0] == "#"):
 
-                        mydb.commit()
+                        final_tweet = "🟢 " + client_text
 
-                        auxiliar = rose_api_variable2
+                        if (final_tweet != last_tweet):
 
-            del rose_api_variable1,rose_api_variable2,rose_api_variable3,rose_api_variable4,rose_price_variable1,dolar_cost, rose_api_variable5, rose_price_variable2
-            gc.collect()
+                            client.create_tweet(text=final_tweet)
 
-    except:
+                            mysql_database_insert(rose_api_variable3, rose_api_variable1, datetime.now().strftime("%H:%M:%S"), dolar_cost)
+
+                            auxiliar = rose_api_variable2
+
+                    elif (rose_api_variable_result4[0] == "#"):
+
+                        final_tweet = "🔴 " + client_text
+
+                        if (final_tweet != last_tweet):
+
+                            client.create_tweet(text=final_tweet)
+
+                            mysql_database_insert(rose_api_variable3, rose_api_variable1, datetime.now().strftime("%H:%M:%S"), dolar_cost)
+
+                            auxiliar = rose_api_variable2
+
+                    else:
+
+                        if (client_text != last_tweet):
+
+                            client.create_tweet(text=client_text)
+
+                            mysql_database_insert(rose_api_variable3, rose_api_variable1, datetime.now().strftime("%H:%M:%S"), dolar_cost)
+
+                            auxiliar = rose_api_variable2
+
+                    del rose_api_variable_result3, rose_api_variable_result4, last_tweet, client_text
 
         del rose_api_variable1,rose_api_variable2,rose_api_variable3,rose_api_variable4,rose_price_variable1,dolar_cost, rose_api_variable5, rose_price_variable2
         gc.collect()
 
-    
+    except:
+
+        errors()
+
+        try:
+
+            del rose_api_variable1,rose_api_variable2,rose_api_variable3,rose_api_variable4,rose_price_variable1,dolar_cost, rose_api_variable5, rose_price_variable2
+            gc.collect()
+
+        except:
+
+            pass
