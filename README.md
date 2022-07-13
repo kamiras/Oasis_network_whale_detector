@@ -34,13 +34,9 @@ This project was made by kamiras. Feel free to use, change and ask everything th
 
 example.py: As the name says it is an example that you could follow to create the database. Rather than doing an .sql script I chose to do it with python for its simplicity.
 
-## What do you consider a whale?
+## What do you consider a whale transaction?
 
-In our opinion we decided to do a **BTC/ROSE** comparison to find out the amount of ROSE equivalent to the BTC network.
-
-If we look at the next picture we can see the Bitcoin column with the supply, amount of bitcoins to become a whale and the percentage of 1000 Bitcoins compared to the supply. If we do the simple math we will find out that the amount of ROSE to become a whale is 470.000 ROSE's, which is 25.380 USD ~ (26/06/2022).
-
-![representation](https://user-images.githubusercontent.com/80554217/175822280-a0243cd3-ff98-4992-8332-d403d11ca64c.png)
+- We consider a whale a transaction that overpasses the 1,200,000 ROSE. ~60k USD (14/07/2022). This number will be increased eventually.
 
 
 ## Installation
