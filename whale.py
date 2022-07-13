@@ -73,9 +73,11 @@ def mysql_database_top():
                       
         .format(
 
-        myresult[0][1], myresult[0][3], myresult[0][2],
-        myresult[1][1], myresult[1][3], myresult[1][2],
-        myresult[2][1], myresult[2][3], myresult[2][2])
+        
+
+        format(int(float(myresult[0][1])), ',d'), format(int(float(myresult[0][3])), ',d'), myresult[0][2],
+        format(int(float(myresult[1][1])), ',d'), format(int(float(myresult[1][3])), ',d'), myresult[1][2],
+        format(int(float(myresult[2][1])), ',d'), format(int(float(myresult[2][3])), ',d'), myresult[2][2])
                           
         )
 
@@ -89,8 +91,8 @@ def mysql_database_top():
                       
             .format(
 
-            myresult[0][1], myresult[0][3], myresult[0][2],
-            myresult[1][1], myresult[1][3], myresult[1][2])
+            format(int(float(myresult[0][1])), ',d'), format(int(float(myresult[0][3])), ',d'), myresult[0][2],
+            format(int(float(myresult[1][1])), ',d'), format(int(float(myresult[1][3])), ',d'), myresult[1][2])
                           
             )
 
@@ -103,7 +105,7 @@ def mysql_database_top():
                       
             .format(
 
-            myresult[0][1], myresult[0][3], myresult[0][2])
+            format(int(float(myresult[0][1])), ',d'), format(int(float(myresult[0][3])), ',d'), myresult[0][2])
                           
                       )
 
@@ -292,7 +294,7 @@ while True:
                 time.sleep(60)
 
 
-            if (dolar_cost >= 60000): # The transactions that are going to be submited 1:1 USD. In this example only transactions over 25K dollars will be processed
+            if (dolar_cost >= 60000): # The transactions that are going to be submited 1:1 USD. In this example only transactions over 60K dollars will be processed
 
                 if auxiliar != rose_api_variable2:
 
@@ -300,7 +302,7 @@ while True:
 
                     last_tweet = twitter_account()
 
-                    client_text = '{0} ROSE ({1} USD) transfered 𝗳𝗿𝗼𝗺 {2} 𝘁𝗼 {3}\n $ROSE #OasisNetwork'.format(rose_api_variable1, format(dolar_cost, ".2f"), rose_api_variable_result3, rose_api_variable_result4)
+                    client_text = '{0} ROSE ({1} USD) transfered 𝗳𝗿𝗼𝗺 {2} 𝘁𝗼 {3}\n $ROSE #OasisNetwork'.format(format(int(float(rose_api_variable1)), ',d'), format(int(float(dolar_cost)), ',d'), rose_api_variable_result3, rose_api_variable_result4)
 
                     if (rose_api_variable_result3[0] == "#" and rose_api_variable_result4[0] == "#"):
 
