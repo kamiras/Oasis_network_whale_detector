@@ -65,7 +65,7 @@ def mysql_database_top():
     if len(myresult) == 3:
 
         client.create_tweet(text='''
-        Top 3 Transactions of the day\n
+        Top 3 Transactions of the Week\n
         1🏆 {0} ROSE ({1} USD) {2} EU\n
         2🥈 {3} ROSE ({4} USD) {5} EU\n
         3🥉 {6} ROSE ({7} USD) {8} EU\n
@@ -84,7 +84,7 @@ def mysql_database_top():
     elif len(myresult) == 2:
 
             client.create_tweet(text='''
-            Top 2 Transactions of the day\n
+            Top 2 Transactions of the Week\n
             1🏆 {0} ROSE ({1} USD) {2} EU\n
             2🥈 {3} ROSE ({4} USD) {5} EU\n
             \n$ROSE #OasisNetwork'''
@@ -99,7 +99,7 @@ def mysql_database_top():
     elif len(myresult) == 1:
 
             client.create_tweet(text='''
-            Top 1 Transaction of the day\n
+            Top 1 Transaction of the Week\n
             1🏆 {0} ROSE ({1} USD) {2} EU\n
             \n$ROSE #OasisNetwork'''
                       
@@ -280,7 +280,7 @@ while True:
 
             dolar_cost = float(rose_price_variable1) * float(rose_api_variable1)
 
-            if (datetime.now().strftime("%H:%M") == "22:00"):
+            if (date.today().weekday() == 5 and datetime.now().strftime("%H:%M") == "22:00"):
 
                     mysql_database_top()
 
@@ -304,51 +304,73 @@ while True:
 
                     client_text = '{0} ROSE ({1} USD) transfered 𝗳𝗿𝗼𝗺 {2} 𝘁𝗼 {3}\n $ROSE #OasisNetwork'.format(format(int(float(rose_api_variable1)), ',d'), format(int(float(dolar_cost)), ',d'), rose_api_variable_result3, rose_api_variable_result4)
 
+                    def tweet_post(final_tweet):
+
+                        global auxiliar
+
+                        client.create_tweet(text=final_tweet)
+
+                        mysql_database_insert(rose_api_variable3, rose_api_variable1, datetime.now().strftime("%H:%M:%S"), dolar_cost)
+
+                        auxiliar = rose_api_variable2
+
                     if (rose_api_variable_result3[0] == "#" and rose_api_variable_result4[0] == "#"):
 
-                        final_tweet = "🏦 " + client_text
+                        final_tweet = "🏦 " + client_text #Punto de carga
 
                         if (final_tweet != last_tweet):
 
-                            client.create_tweet(text=final_tweet)
-
-                            mysql_database_insert(rose_api_variable3, rose_api_variable1, datetime.now().strftime("%H:%M:%S"), dolar_cost)
-
-                            auxiliar = rose_api_variable2
+                            tweet_post(final_tweet)
 
                     elif (rose_api_variable_result3[0] == "#"):
 
-                        final_tweet = "🟢 " + client_text
+                        if dolar_cost >= 1000000:
+
+                            final_tweet = "🟢🟢🟢🟢 " + client_text
+
+                        elif dolar_cost >= 300000:
+
+                            final_tweet = "🟢🟢🟢 " + client_text
+
+                        elif dolar_cost >= 100000:
+
+                            final_tweet = "🟢🟢 " + client_text
+
+                        elif dolar_cost >= 60000:
+
+                            final_tweet = "🟢 " + client_text 
 
                         if (final_tweet != last_tweet):
 
-                            client.create_tweet(text=final_tweet)
-
-                            mysql_database_insert(rose_api_variable3, rose_api_variable1, datetime.now().strftime("%H:%M:%S"), dolar_cost)
-
-                            auxiliar = rose_api_variable2
+                            tweet_post(final_tweet)
 
                     elif (rose_api_variable_result4[0] == "#"):
 
-                        final_tweet = "🔴 " + client_text
+                        if dolar_cost >= 1000000:
+
+                            final_tweet = "🔴🔴🔴🔴 " + client_text
+
+                        elif dolar_cost >= 300000:
+
+                            final_tweet = "🔴🔴🔴 " + client_text
+
+                        elif dolar_cost >= 100000:
+
+                            final_tweet = "🔴🔴 " + client_text
+
+                        elif dolar_cost >= 60000:
+
+                            final_tweet = "🔴 " + client_text 
 
                         if (final_tweet != last_tweet):
 
-                            client.create_tweet(text=final_tweet)
-
-                            mysql_database_insert(rose_api_variable3, rose_api_variable1, datetime.now().strftime("%H:%M:%S"), dolar_cost)
-
-                            auxiliar = rose_api_variable2
+                            tweet_post(final_tweet)
 
                     else:
 
                         if (client_text != last_tweet):
 
-                            client.create_tweet(text=client_text)
-
-                            mysql_database_insert(rose_api_variable3, rose_api_variable1, datetime.now().strftime("%H:%M:%S"), dolar_cost)
-
-                            auxiliar = rose_api_variable2
+                            tweet_post(client_text)
 
                     del rose_api_variable_result3, rose_api_variable_result4, last_tweet, client_text
 
