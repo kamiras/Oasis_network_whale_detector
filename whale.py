@@ -310,7 +310,7 @@ while True:
 
                         client.create_tweet(text=final_tweet)
 
-                        mysql_database_insert(rose_api_variable3, rose_api_variable1, datetime.now().strftime("%H:%M:%S"), dolar_cost)
+                        mysql_database_insert(rose_api_variable3, rose_api_variable1, date.today(), dolar_cost)
 
                         auxiliar = rose_api_variable2
 
