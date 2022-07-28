@@ -19,7 +19,7 @@ This project was made by kamiras. Feel free to use, change and ask everything th
 
 **Automated Tweets**
 
-- The bot tweets transactions over **25000 dollars** by default.
+- The bot tweets transactions over **60000 dollars** by default.
 - Every 24 Hours the bot tweets a rank of the 3 highest transactions of the Network (22:00 EU).
 
 **Weekly Chart**
