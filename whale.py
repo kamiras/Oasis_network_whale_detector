@@ -66,9 +66,9 @@ def mysql_database_top():
 
         client.create_tweet(text='''
         Top 3 Transactions of the Week\n
-        1🏆 {0} ROSE ({1} USD) {2} EU\n
-        2🥈 {3} ROSE ({4} USD) {5} EU\n
-        3🥉 {6} ROSE ({7} USD) {8} EU\n
+        1🏆 {0} ROSE ({1} USD) 📅 {2}\n
+        2🥈 {3} ROSE ({4} USD) 📅 {5}\n
+        3🥉 {6} ROSE ({7} USD) 📅 {8}\n
         \n$ROSE #OasisNetwork'''
                       
         .format(
@@ -85,8 +85,8 @@ def mysql_database_top():
 
             client.create_tweet(text='''
             Top 2 Transactions of the Week\n
-            1🏆 {0} ROSE ({1} USD) {2} EU\n
-            2🥈 {3} ROSE ({4} USD) {5} EU\n
+            1🏆 {0} ROSE ({1} USD) 📅 {2}\n
+            2🥈 {3} ROSE ({4} USD) 📅 {5}\n
             \n$ROSE #OasisNetwork'''
                       
             .format(
@@ -100,7 +100,7 @@ def mysql_database_top():
 
             client.create_tweet(text='''
             Top 1 Transaction of the Week\n
-            1🏆 {0} ROSE ({1} USD) {2} EU\n
+            1🏆 {0} ROSE ({1} USD) 📅 {2}\n
             \n$ROSE #OasisNetwork'''
                       
             .format(
@@ -135,8 +135,9 @@ def rose_api():
         result2 = parse_json['data']['list'][0]['txHash']
         result3 = parse_json['data']['list'][0]['from']
         result4 = parse_json['data']['list'][0]['to']
+        result5 = parse_json['data']['list'][0]['status']
 
-        return result1, result2, result3, result4, True
+        return result1, result2, result3, result4, True, result5
 
     except:
 
@@ -266,7 +267,7 @@ while True:
 
     try:
 
-        rose_api_variable1, rose_api_variable2, rose_api_variable3, rose_api_variable4, rose_api_variable5 = rose_api()
+        rose_api_variable1, rose_api_variable2, rose_api_variable3, rose_api_variable4, rose_api_variable5, rose_api_variable_6_status  = rose_api()
 
         try:
 
@@ -294,87 +295,89 @@ while True:
                 time.sleep(60)
 
 
-            if (dolar_cost >= 60000): # The transactions that are going to be submited 1:1 USD. In this example only transactions over 60K dollars will be processed
+            if (dolar_cost >= 80000): # The transactions that are going to be submited 1:1 USD. In this example only transactions over 80K dollars will be processed
 
-                if auxiliar != rose_api_variable2:
+                if auxiliar != rose_api_variable2: # If the transaction is different from the last
 
-                    rose_api_variable_result3, rose_api_variable_result4 = comprobaciones(rose_api_variable3, rose_api_variable4)
+                    if rose_api_variable_6_status == True: # If the transaction has been submited correctly to the blockchain
 
-                    last_tweet = twitter_account()
+                        rose_api_variable_result3, rose_api_variable_result4 = comprobaciones(rose_api_variable3, rose_api_variable4)
 
-                    client_text = '{0} ROSE ({1} USD) transfered 𝗳𝗿𝗼𝗺 {2} 𝘁𝗼 {3}\n $ROSE #OasisNetwork'.format(format(int(float(rose_api_variable1)), ',d'), format(int(float(dolar_cost)), ',d'), rose_api_variable_result3, rose_api_variable_result4)
+                        last_tweet = twitter_account()
 
-                    def tweet_post(final_tweet):
+                        client_text = '{0} ROSE ({1} USD) transfered 𝗳𝗿𝗼𝗺 {2} 𝘁𝗼 {3}\n $ROSE #OasisNetwork'.format(format(int(float(rose_api_variable1)), ',d'), format(int(float(dolar_cost)), ',d'), rose_api_variable_result3, rose_api_variable_result4)
 
-                        global auxiliar
+                        def tweet_post(final_tweet):
 
-                        client.create_tweet(text=final_tweet)
+                            global auxiliar
 
-                        mysql_database_insert(rose_api_variable3, rose_api_variable1, date.today(), dolar_cost)
+                            client.create_tweet(text=final_tweet)
 
-                        auxiliar = rose_api_variable2
+                            mysql_database_insert(rose_api_variable3, rose_api_variable1, date.today(), dolar_cost)
 
-                    if (rose_api_variable_result3[0] == "#" and rose_api_variable_result4[0] == "#"):
+                            auxiliar = rose_api_variable2
 
-                        final_tweet = "🏦 " + client_text #Punto de carga
+                        if (rose_api_variable_result3[0] == "#" and rose_api_variable_result4[0] == "#"):
 
-                        if (final_tweet != last_tweet):
+                            final_tweet = "🏦 " + client_text #Punto de carga
 
-                            tweet_post(final_tweet)
+                            if (final_tweet != last_tweet):
 
-                    elif (rose_api_variable_result3[0] == "#"):
+                                tweet_post(final_tweet)
 
-                        if dolar_cost >= 1000000:
+                        elif (rose_api_variable_result3[0] == "#"):
 
-                            final_tweet = "🟢🟢🟢🟢 " + client_text
+                            if dolar_cost >= 1000000:
 
-                        elif dolar_cost >= 300000:
+                                final_tweet = "🟢🟢🟢🟢 " + client_text
 
-                            final_tweet = "🟢🟢🟢 " + client_text
+                            elif dolar_cost >= 300000:
 
-                        elif dolar_cost >= 100000:
+                                final_tweet = "🟢🟢🟢 " + client_text
 
-                            final_tweet = "🟢🟢 " + client_text
+                            elif dolar_cost >= 100000:
 
-                        elif dolar_cost >= 60000:
+                                final_tweet = "🟢🟢 " + client_text
 
-                            final_tweet = "🟢 " + client_text 
+                            elif dolar_cost >= 60000:
 
-                        if (final_tweet != last_tweet):
+                                final_tweet = "🟢 " + client_text 
 
-                            tweet_post(final_tweet)
+                            if (final_tweet != last_tweet):
 
-                    elif (rose_api_variable_result4[0] == "#"):
+                                tweet_post(final_tweet)
 
-                        if dolar_cost >= 1000000:
+                        elif (rose_api_variable_result4[0] == "#"):
 
-                            final_tweet = "🔴🔴🔴🔴 " + client_text
+                            if dolar_cost >= 1000000:
 
-                        elif dolar_cost >= 300000:
+                                final_tweet = "🔴🔴🔴🔴 " + client_text
 
-                            final_tweet = "🔴🔴🔴 " + client_text
+                            elif dolar_cost >= 300000:
 
-                        elif dolar_cost >= 100000:
+                                final_tweet = "🔴🔴🔴 " + client_text
 
-                            final_tweet = "🔴🔴 " + client_text
+                            elif dolar_cost >= 100000:
 
-                        elif dolar_cost >= 60000:
+                                final_tweet = "🔴🔴 " + client_text
 
-                            final_tweet = "🔴 " + client_text 
+                            elif dolar_cost >= 60000:
 
-                        if (final_tweet != last_tweet):
+                                final_tweet = "🔴 " + client_text 
 
-                            tweet_post(final_tweet)
+                            if (final_tweet != last_tweet):
 
-                    else:
+                                tweet_post(final_tweet)
 
-                        if (client_text != last_tweet):
+                        else:
 
-                            tweet_post(client_text)
+                            if (client_text != last_tweet):
 
-                    del rose_api_variable_result3, rose_api_variable_result4, last_tweet, client_text
+                                tweet_post(client_text)
 
-        del rose_api_variable1,rose_api_variable2,rose_api_variable3,rose_api_variable4,rose_price_variable1,dolar_cost, rose_api_variable5, rose_price_variable2
+                        del rose_api_variable_result3, rose_api_variable_result4, last_tweet, client_text
+
+        del rose_api_variable1,rose_api_variable2,rose_api_variable3,rose_api_variable4,rose_price_variable1,dolar_cost, rose_api_variable5, rose_price_variable2, rose_api_variable_6_status
         gc.collect()
 
     except:
@@ -383,7 +386,7 @@ while True:
 
         try:
 
-            del rose_api_variable1,rose_api_variable2,rose_api_variable3,rose_api_variable4,rose_price_variable1,dolar_cost, rose_api_variable5, rose_price_variable2
+            del rose_api_variable1,rose_api_variable2,rose_api_variable3,rose_api_variable4,rose_price_variable1,dolar_cost, rose_api_variable5, rose_price_variable2, rose_api_variable_6_status
             gc.collect()
 
         except:
