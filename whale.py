@@ -295,7 +295,7 @@ while True:
                 time.sleep(60)
 
 
-            if (dolar_cost >= 80000): # The transactions that are going to be submited 1:1 USD. In this example only transactions over 80K dollars will be processed
+            if (dolar_cost >= 75000): # The transactions that are going to be submited 1:1 USD. In this example only transactions over 80K dollars will be processed
 
                 if auxiliar != rose_api_variable2: # If the transaction is different from the last
 
