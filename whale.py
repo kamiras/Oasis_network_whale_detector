@@ -305,7 +305,7 @@ while True:
 
                         last_tweet = twitter_account()
 
-                        client_text = '{0} ROSE ({1} USD) transfered 𝗳𝗿𝗼𝗺 {2} 𝘁𝗼 {3}\n $ROSE #OasisNetwork The first Private Exchange @privbitnet'.format(format(int(float(rose_api_variable1)), ',d'), format(int(float(dolar_cost)), ',d'), rose_api_variable_result3, rose_api_variable_result4)
+                        client_text = '{0} ROSE ({1} USD) transfered 𝗳𝗿𝗼𝗺 {2} 𝘁𝗼 {3}\n $ROSE #OasisNetwork'.format(format(int(float(rose_api_variable1)), ',d'), format(int(float(dolar_cost)), ',d'), rose_api_variable_result3, rose_api_variable_result4)
 
                         def tweet_post(final_tweet):
 
